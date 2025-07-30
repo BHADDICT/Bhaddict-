@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: bhaddict
-    env: php
-    plan: free
-    buildCommand: ""
-    startCommand: ""
-    autoDeploy: true
