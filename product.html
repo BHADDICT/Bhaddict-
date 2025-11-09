@@ -660,6 +660,12 @@
 </head>
 
 <body>
+  <!-- Audio element moved to top -->
+  <audio id="bgMusic" loop>
+    <source src="./img/bad.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
   <div class="ipod-container">
     <div class="screen">
       <div class="screen-header">
@@ -760,24 +766,34 @@
     </div>
   </div>
 
-  <audio id="bgMusic" autoplay loop>
-    <source src="./img/bad.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
   <script>
-    // Try to auto-play (some browsers block autoplay until user interacts)
+    // Initialize music playback immediately
     const bgMusic = document.getElementById('bgMusic');
-    document.addEventListener('click', () => {
-      if (bgMusic.paused) {
-        bgMusic.play().catch(() => {});
-      }
-    }, { once: true });
-  </script>
-</body>
-</html>
+    bgMusic.volume = 0.5; // Set volume to 50%
+    
+    // Try to play immediately
+    const playMusic = () => {
+      bgMusic.play().catch(err => {
+        console.log('Autoplay blocked, waiting for user interaction:', err);
+      });
+    };
+    
+    // Attempt autoplay on load
+    playMusic();
+    
+    // Fallback: play on any user interaction
+    const enableAudio = () => {
+      bgMusic.play().catch(() => {});
+      // Remove listeners after first successful play
+      document.removeEventListener('click', enableAudio);
+      document.removeEventListener('touchstart', enableAudio);
+      document.removeEventListener('keydown', enableAudio);
+    };
+    
+    document.addEventListener('click', enableAudio);
+    document.addEventListener('touchstart', enableAudio);
+    document.addEventListener('keydown', enableAudio);
 
-  <script>
     // Product data
     const product = {
       id: 2,
@@ -958,17 +974,3 @@
     };
 
     // Checkout button
-    document.getElementById('checkoutBtn').addEventListener('click', () => {
-      const cart = getCart();
-      if (cart.length === 0) {
-        alert('Your cart is empty!');
-        return;
-      }
-      window.location.href = 'checkout.html';
-    });
-
-    // Initialize cart count on page load
-    updateCartCount();
-  </script>
-</body>
-</html>
