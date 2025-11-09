@@ -758,6 +758,23 @@
       </div>
     </div>
   </div>
+  <!-- Background Music -->
+  <audio id="bgMusic" autoplay loop>
+    <source src="./img/bad.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    // Try to auto-play (some browsers block autoplay until user interacts)
+    const bgMusic = document.getElementById('bgMusic');
+    document.addEventListener('click', () => {
+      if (bgMusic.paused) {
+        bgMusic.play().catch(() => {});
+      }
+    }, { once: true });
+  </script>
+</body>
+</html>
 
   <script>
     // Product data
