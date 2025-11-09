@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bhaddict</title>
+  <link rel="icon" href="./img/logay.png" type="image/png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            overflow: hidden;
+        }
+#bg-video {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: auto;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  object-fit: cover;
+}
+
+  .icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.icon-item img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.icon-item p {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.6);
+}
+
+.icon-link {
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.icon-link:hover {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+  
+.icon-item p {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.6);
+}    .icon-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .icon-link {
+            display: block;
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .icon-link:hover {
+            transform: scale(1.1);
+            filter: brightness(1.2);
+            
+        }
+
+        .icon-link img {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .icon-link img {
+                width: 90px;
+                height: 90px;
+                padding: 12px;
+            }
+
+            .icon-container {
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .icon-link img {
+                width: 50px;
+                height: 50px;
+                padding: 10px;
+                border-radius: 12px;
+            }
+
+            .icon-container {
+                gap: 15px;
+            }
+        }
+
+        /* Overlay to darken video if needed */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Video -->
+    <video id="bg-video" autoplay loop muted playsinline>
+        <source src="./img/video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Optional overlay to darken video -->
+    <div class="overlay"></div>
+
+    <!-- Icon Navigation -->
+   <div class="icon-container">
+  <!-- Home Icon -->
+  <a href="home.html" class="icon-link">
+    <div class="icon-item">
+      <img src="./img/iconic.png" alt="Home">
+      <p>SHOP HERE</p>
+    </div>
+  </a>
+
+  <!-- Page Icon -->
+  <a href="page.html" class="icon-link">
+    <div class="icon-item">
+      <img src="./img/iconic1.png" alt="Page">
+      <p>GALLERY</p>
+    </div>
+  </a>
+</div>
+
+
+    <script>
+        // Ensure video plays on mobile devices
+        const video = document.getElementById('bg-video');
+        video.play().catch(error => {
+            console.log('Video autoplay failed:', error);
+        });
+    </script>
+</body>
+</html>

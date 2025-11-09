@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BHADDICT iPod Carousel</title>
+  <style>
+    body {
+      background: #d6d6d6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 30% 30%, rgba(255, 244, 230, 0.08), transparent 60%),
+        rgba(255, 250, 240, 0.05);
+      pointer-events: none;
+      z-index: 10000;
+      mix-blend-mode: overlay;
+      filter: contrast(1.05) saturate(0.85) brightness(0.98);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("./img/grain.jpg");
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 9999;
+      animation: grainMove 1.5s steps(4) infinite;
+    }
+
+    .ipod {
+      width: 300px;
+      height: 550px;
+      background: linear-gradient(#e5e5e5, #bdbdbd);
+      border-radius: 30px;
+      box-shadow: inset 0 0 10px #aaa, 0 10px 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 25px;
+    }
+
+    .screen {
+      width: 260px;
+      height: 180px;
+      background: #fff;
+      border: 3px solid #000;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 10px;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen-header {
+      background: linear-gradient(#e5e8ea, #c9cacc);
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .cart-icon {
+      width: 20px;
+      height: 16px;
+      border-radius: 3px;
+      position: relative;
+      background-image: url('./img/icon.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      cursor: pointer;
+    }
+
+    .cart-icon::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 4px;
+      width: 12px;
+      height: 2px;
+      border-radius: 1px;
+    }
+
+    .cart-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #e74c3c;
+  color: white;
+  font-size: 8px;
+  font-weight: bold;
+  min-width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+    /* Carousel Section */
+    .carousel {
+      flex: 1;
+      width: 100%;
+      position: relative;
+      overflow: visible;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1000px;
+    }
+
+    .carousel-track {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+    }
+
+    .item {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 0;
+      transform: scale(0.4) translateX(0) rotateY(45deg);
+      pointer-events: none;
+    }
+
+    .item img {
+      width: 100px;
+      height: auto;
+      display: block;
+      border-radius: 4px;
+    }
+
+    /* Center active item */
+    .item.active {
+      z-index: 5;
+      opacity: 1;
+      transform: scale(1.1) translateX(0) rotateY(0deg);
+      pointer-events: auto;
+    }
+
+    .item.active img {
+      width: 110px;
+    }
+
+    /* Left side items */
+    .item.left-1 {
+      z-index: 4;
+      opacity: 0.8;
+      transform: scale(0.75) translateX(-75px) rotateY(25deg);
+    }
+
+    .item.left-2 {
+      z-index: 3;
+      opacity: 0.6;
+      transform: scale(0.6) translateX(-70px) rotateY(35deg);
+    }
+
+    .item.left-3 {
+      z-index: 2;
+      opacity: 0.4;
+      transform: scale(0.5) translateX(-155px) rotateY(45deg);
+    }
+
+    .item.left-4 {
+      z-index: 1;
+      opacity: 0.2;
+      transform: scale(0.4) translateX(-185px) rotateY(50deg);
+    }
+
+    /* Right side items */
+    .item.right-1 {
+      z-index: 4;
+      opacity: 0.8;
+      transform: scale(0.75) translateX(75px) rotateY(-25deg);
+    }
+
+    .item.right-2 {
+      z-index: 3;
+      opacity: 0.6;
+      transform: scale(0.6) translateX(120px) rotateY(-35deg);
+    }
+
+    .item.right-3 {
+      z-index: 2;
+      opacity: 0.4;
+      transform: scale(0.5) translateX(155px) rotateY(-45deg);
+    }
+
+    .item.right-4 {
+      z-index: 1;
+      opacity: 0.2;
+      transform: scale(0.4) translateX(185px) rotateY(-50deg);
+    }
+
+    .product-name {
+      margin-top: 8px;
+      font-weight: bold;
+      font-size: 10px;
+      color: #333;
+      text-align: center;
+    }
+
+    .item.sold-out {
+      position: relative;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .sold-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.7);
+      color: rgb(255, 0, 0);
+      font-weight: bold;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    /* Wheel */
+    .wheel {
+      width: 220px;
+      height: 220px;
+      background: white;
+      border-radius: 50%;
+      margin-top: 50px;
+      box-shadow: inset 0 0 10px #ccc;
+      position: relative;
+    }
+
+    .wheel button {
+      position: absolute;
+      border: none;
+      background: none;
+      font-size: 14px;
+      color: #777;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .wheel button:hover {
+      color: #333;
+    }
+
+    .wheel button:active {
+      color: #000;
+    }
+
+    .menu { top: 25px; left: 50%; transform: translateX(-50%); }
+    .backward { left: 30px; top: 50%; transform: translateY(-50%); }
+    .forward { right: 30px; top: 50%; transform: translateY(-50%); }
+    .play { bottom: 25px; left: 50%; transform: translateX(-50%); }
+
+    .center-btn {
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle at 30% 30%, #f1f1f1, #ccc);
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 3px rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+
+    .center-btn:active {
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+    }
+
+    /* Cart Popup */
+    .cart-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border: 3px solid #000;
+      border-radius: 12px;
+      width: 350px;
+      max-height: 500px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      z-index: 10001;
+      overflow: hidden;
+    }
+
+    .cart-popup.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cart-header {
+      background: linear-gradient(#e5e8ea, #c9cacc);
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #000;
+    }
+
+    .cart-header h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 0;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cart-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+    }
+
+    .cart-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      background: #f9f9f9;
+      position: relative;
+    }
+
+    .cart-item img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 4px;
+      background: white;
+    }
+
+    .cart-item-details {
+      flex: 1;
+    }
+
+    .remove-item-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #c1c1c1;
+      color: white;
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .remove-item-btn:hover {
+      background: #c0392b;
+    }
+
+    .cart-item-name {
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .cart-item-price {
+      color: #e74c3c;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .cart-item-size {
+      font-size: 12px;
+      color: #666;
+      margin: 4px 0;
+    }
+
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .quantity-controls button {
+      background: #333;
+      color: white;
+      border: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .quantity-controls span {
+      font-weight: bold;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    .cart-footer {
+      border-top: 2px solid #000;
+      padding: 15px;
+      background: #f5f5f5;
+    }
+
+    .checkout-btn {
+      width: 100%;
+      padding: 12px;
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .checkout-btn:hover {
+      background: #000;
+    }
+
+    .cart-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 10000;
+    }
+
+    .cart-overlay.active {
+      display: block;
+    }
+
+    .empty-cart {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+    }
+
+    .add-notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: bold;
+      z-index: 10002;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .add-notification.show {
+      opacity: 1;
+    }
+
+    /* Size Selection Modal */
+    .size-modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border: 3px solid #000;
+      border-radius: 12px;
+      width: 320px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      z-index: 10003;
+      overflow: hidden;
+    }
+
+    .size-modal.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .size-modal-header {
+      background: linear-gradient(#e5e8ea, #c9cacc);
+      padding: 12px;
+      border-bottom: 2px solid #000;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .size-modal-content {
+      padding: 20px;
+    }
+
+    .size-modal-product {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .size-modal-product img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .size-modal-product-info h3 {
+      margin: 0 0 5px 0;
+      font-size: 14px;
+    }
+
+    .size-modal-product-info p {
+      margin: 0;
+      color: #e74c3c;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .size-options {
+      margin-bottom: 20px;
+    }
+
+    .size-options label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .size-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .size-btn {
+      flex: 1;
+      min-width: 60px;
+      padding: 10px;
+      border: 2px solid #ddd;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+
+    .size-btn:hover {
+      border-color: #333;
+    }
+
+    .size-btn.selected {
+      border-color: #333;
+      background: #333;
+      color: white;
+    }
+
+    .size-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.3;
+    }
+
+    .size-modal-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .size-modal-actions button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .cancel-btn {
+      background: #ddd;
+      color: #333;
+    }
+
+    .cancel-btn:hover {
+      background: #ccc;
+    }
+
+    .confirm-add-btn {
+      background: #333;
+      color: white;
+    }
+
+    .confirm-add-btn:hover {
+      background: #000;
+    }
+
+    .size-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 10002;
+    }
+
+    .size-modal-overlay.active {
+      display: block;
+    }
+@media (orientation: landscape) {
+  body {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+  }
+  .ipod {
+    transform: scale(0.85);
+  }
+}
+
+/* Prevent cutoff on ultra-small screens */
+@media (max-height: 500px) {
+  .ipod {
+    transform: scale(0.9);
+  }
+}
+  </style>
+</head>
+<body>
+  <div class="ipod">
+    <div class="screen">
+      <div class="screen-header">
+        <span>BHADDICT</span>
+        <div class="cart-icon" id="cartIcon">
+          <span class="cart-count" id="cartCount">0</span>
+        </div>
+      </div>
+      <div class="carousel">
+        <div class="carousel-track" id="carouselTrack">
+
+          <div class="item active" data-index="0" data-price="34.99" onclick="window.location.href='product.html';">
+            <img src="./img/hoodie1.png" alt="BAD Hoodie">
+            <div class="product-name">BAD</div>
+          </div>
+
+          <div class="item" data-index="1" data-price="34.99" onclick="window.location.href='black.html';">
+            <img src="./img/hoodie2.png" alt="New Drop">
+            <div class="product-name">BAD V2</div>
+          </div>
+
+          <div class="item" data-index="2" data-price="9.99" onclick="window.location.href='white.html';">
+            <img src="./img/white.png" alt="Classic">
+            <div class="product-name">Tee white stripes</div>
+          </div>
+
+          <div class="item" data-index="3" data-price="9.99" onclick="window.location.href='classic.html';">
+            <img src="./img/pro.png" alt="Pro">
+            <div class="product-name">Tee Black stripes</div>
+          </div>
+
+          <div class="item sold-out" data-index="4" data-price="9.99" aria-disabled="true">
+            <img src="./img/pro3.png" alt="Limited">
+            <div class="product-name">LIMITED</div>
+            <div class="sold-overlay">SOLD OUT</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="wheel">
+      <button class="menu">MENU</button>
+      <button class="backward" id="prevBtn">⏮</button>
+      <button class="forward" id="nextBtn">⏭</button>
+      <button class="play" onclick="window.location.href='index.html';">▶️ / ⏸</button>
+      <div class="center-btn" id="addToCartBtn"></div>
+    </div>
+  </div>
+
+  <!-- Add to Cart Notification -->
+  <div class="add-notification" id="addNotification">Added to cart!</div>
+
+  <!-- Size Selection Modal Overlay -->
+  <div class="size-modal-overlay" id="sizeModalOverlay"></div>
+
+  <!-- Size Selection Modal -->
+  <div class="size-modal" id="sizeModal">
+    <div class="size-modal-header">Select Size</div>
+    <div class="size-modal-content">
+      <div class="size-modal-product">
+        <img id="modalProductImage" src="" alt="">
+        <div class="size-modal-product-info">
+          <h3 id="modalProductName"></h3>
+          <p id="modalProductPrice"></p>
+        </div>
+      </div>
+      <div class="size-options">
+        <label>Choose your size:</label>
+        <div class="size-buttons" id="sizeButtonsContainer">
+          <!-- Size buttons will be dynamically generated -->
+        </div>
+      </div>
+      <div class="size-modal-actions">
+        <button class="cancel-btn" id="cancelSize">Cancel</button>
+        <button class="confirm-add-btn" id="confirmAdd">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Overlay -->
+  <div class="cart-overlay" id="cartOverlay"></div>
+
+  <!-- Cart Popup -->
+  <div class="cart-popup" id="cartPopup">
+    <div class="cart-header">
+      <h2>Checking out already bro?</h2>
+      <button class="close-btn" id="closeCart">✕</button>
+    </div>
+    <div class="cart-content" id="cartContent">
+      <!-- Cart items will be inserted here dynamically -->
+    </div>
+    <div class="cart-footer">
+          <button class="checkout-btn" id="checkoutBtn">check out</button>
+    </div>
+  </div>
+  <script>
+    const items = document.querySelectorAll('.item');
+    let currentIndex = 0;
+    const totalItems = items.length;
+
+    const products = [
+      { id: 1, name: 'BAD', image: './img/hoodie1.png', price: 34.99, sizes: ['S', 'M', 'L'] },
+      { id: 2, name: 'BAD V2', image: './img/hoodie2.png', price: 34.99, sizes: ['S', 'M', 'L'] },
+      { id: 3, name: 'Tee white stripes', image: './img/white.png', price: 9.99, sizes: ['S', 'XL'] },
+      { id: 4, name: 'Tee Black stripes', image: './img/pro.png', price: 9.99, sizes: ['S', 'XL'] },
+      { id: 5, name: 'LIMITED', image: './img/pro3.png', price: 9.99, sizes: ['S', 'M', 'L', 'XL'] }
+    ];
+
+    // Cart management functions
+    function getCart() {
+      const cart = localStorage.getItem('cartData');
+      return cart ? JSON.parse(cart) : [];
+    }
+
+    function saveCart(cart) {
+      localStorage.setItem('cartData', JSON.stringify(cart));
+      updateCartCount();
+      renderCart();
+    }
+
+    function addToCart(product, size) {
+      const cart = getCart();
+      const existingItem = cart.find(item => item.id === product.id && item.size === size);
+      
+      if (existingItem) {
+        existingItem.qty += 1;
+      } else {
+        cart.push({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          qty: 1,
+          size: size
+        });
+      }
+      
+      saveCart(cart);
+    }
+
+    function removeFromCart(productId, size) {
+      let cart = getCart();
+      cart = cart.filter(item => !(item.id === productId && item.size === size));
+      saveCart(cart);
+    }
+
+    function updateQuantity(productId, size, newQty) {
+      const cart = getCart();
+      const item = cart.find(item => item.id === productId && item.size === size);
+      
+      if (item) {
+        if (newQty <= 0) {
+          removeFromCart(productId, size);
+        } else {
+          item.qty = newQty;
+          saveCart(cart);
+        }
+      }
+    }
+
+    function updateCartCount() {
+      const cart = getCart();
+      const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+      const cartCountElement = document.getElementById('cartCount');
+      cartCountElement.textContent = totalItems;
+      cartCountElement.style.display = totalItems > 0 ? 'flex' : 'none';
+    }
+
+    function renderCart() {
+      const cart = getCart();
+      const cartContent = document.getElementById('cartContent');
+      
+      if (cart.length === 0) {
+        cartContent.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
+        return;
+      }
+      
+      cartContent.innerHTML = cart.map(item => `
+        <div class="cart-item" data-id="${item.id}" data-size="${item.size}">
+          <button class="remove-item-btn" onclick="removeItem(${item.id}, '${item.size}')">🗑️</button>
+          <img src="${item.image}" alt="${item.name}">
+          <div class="cart-item-details">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+            <div class="cart-item-size">size: ${item.size}</div>
+            <div class="quantity-controls">
+              <button onclick="changeQty(${item.id}, '${item.size}', -1)">-</button>
+              <span class="qty-value">${item.qty}</span>
+              <button onclick="changeQty(${item.id}, '${item.size}', 1)">+</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function removeItem(productId, size) {
+      removeFromCart(productId, size);
+    }
+
+    function changeQty(productId, size, delta) {
+      const cart = getCart();
+      const item = cart.find(item => item.id === productId && item.size === size);
+      if (item) {
+        updateQuantity(productId, size, item.qty + delta);
+      }
+    }
+
+    // Carousel functions
+    function updateCarousel() {
+      items.forEach((item, index) => {
+        item.classList.remove('active', 'left-1', 'left-2', 'left-3', 'left-4', 'right-1', 'right-2', 'right-3', 'right-4');
+        
+        let diff = index - currentIndex;
+        
+        if (diff > totalItems / 2) diff -= totalItems;
+        if (diff < -totalItems / 2) diff += totalItems;
+        
+        if (diff === 0) item.classList.add('active');
+        else if (diff === -1) item.classList.add('left-1');
+        else if (diff === -2) item.classList.add('left-2');
+        else if (diff === -3) item.classList.add('left-3');
+        else if (diff <= -4) item.classList.add('left-4');
+        else if (diff === 1) item.classList.add('right-1');
+        else if (diff === 2) item.classList.add('right-2');
+        else if (diff === 3) item.classList.add('right-3');
+        else if (diff >= 4) item.classList.add('right-4');
+      });
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % totalItems;
+      updateCarousel();
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + totalItems) % totalItems;
+      updateCarousel();
+    });
+
+    // Cart UI functions
+    const cartIcon = document.getElementById('cartIcon');
+    const cartPopup = document.getElementById('cartPopup');
+    const cartOverlay = document.getElementById('cartOverlay');
+    const closeCart = document.getElementById('closeCart');
+
+    function openCart() {
+      renderCart();
+      cartPopup.classList.add('active');
+      cartOverlay.classList.add('active');
+    }
+
+    function closeCartPopup() {
+      cartPopup.classList.remove('active');
+      cartOverlay.classList.remove('active');
+    }
+
+    cartIcon.addEventListener('click', openCart);
+    closeCart.addEventListener('click', closeCartPopup);
+    cartOverlay.addEventListener('click', closeCartPopup);
+
+    // Size selection modal
+    const addToCartBtn = document.getElementById('addToCartBtn');
+    const addNotification = document.getElementById('addNotification');
+    const sizeModal = document.getElementById('sizeModal');
+    const sizeModalOverlay = document.getElementById('sizeModalOverlay');
+    const cancelSize = document.getElementById('cancelSize');
+    const confirmAdd = document.getElementById('confirmAdd');
+    const modalProductImage = document.getElementById('modalProductImage');
+    const modalProductName = document.getElementById('modalProductName');
+    const modalProductPrice = document.getElementById('modalProductPrice');
+    const sizeButtonsContainer = document.getElementById('sizeButtonsContainer');
+
+    let selectedSize = null;
+    let currentProductToAdd = null;
+
+    addToCartBtn.addEventListener('click', () => {
+      const activeItem = items[currentIndex];
+      if (activeItem.classList.contains('sold-out')) {
+        alert('This item is sold out!');
+        return;
+      }
+
+      currentProductToAdd = products[currentIndex];
+      modalProductImage.src = currentProductToAdd.image;
+      modalProductName.textContent = currentProductToAdd.name;
+      modalProductPrice.textContent = `$${currentProductToAdd.price.toFixed(2)}`;
+   
+      sizeButtonsContainer.innerHTML = '';
+      currentProductToAdd.sizes.forEach(size => {
+        const btn = document.createElement('button');
+        btn.className = 'size-btn';
+        btn.dataset.size = size;
+        btn.textContent = size;
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          selectedSize = size;
+        });
+        sizeButtonsContainer.appendChild(btn);
+      });
+      
+      sizeModal.classList.add('active');
+      sizeModalOverlay.classList.add('active');
+      selectedSize = null;
+    });
+
+    function closeSizeModal() {
+      sizeModal.classList.remove('active');
+      sizeModalOverlay.classList.remove('active');
+    }
+
+    cancelSize.addEventListener('click', closeSizeModal);
+    sizeModalOverlay.addEventListener('click', closeSizeModal);
+
+    confirmAdd.addEventListener('click', () => {
+      if (!selectedSize) {
+        alert('Please select a size');
+        return;
+      }
+
+      addToCart(currentProductToAdd, selectedSize);
+      
+      closeSizeModal();
+      addNotification.classList.add('show');
+      setTimeout(() => {
+        addNotification.classList.remove('show');
+      }, 2000);
+    });
+
+    // Checkout button
+    document.getElementById('checkoutBtn').addEventListener('click', () => {
+      const cart = getCart();
+      if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+      }
+      window.location.href = 'checkout.html';
+    });
+
+    // Initialize
+    updateCarousel();
+    updateCartCount();
+    renderCart();
+  </script>
+
+</body>
+</html>
