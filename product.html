@@ -965,7 +965,7 @@
       if (e.target === cartModal) cartModal.classList.remove('active');
     });
 
-    // Add to cart button
+
     document.getElementById('addToCart').onclick = () => {
       addToCart(product, sizes[selectedSize], quantity);
       alert(`Added ${quantity} × ${product.name} (${sizes[selectedSize]}) to cart!`);
