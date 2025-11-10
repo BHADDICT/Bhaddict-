@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Bhaddict</title>
+  <title>Bhaddict</title>
   <link rel="icon" href="./img/logay.png" type="image/png">
   <style>
     body {
@@ -100,22 +100,22 @@
     }
 
     .cart-count {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  background: #e74c3c;
-  color: white;
-  font-size: 8px;
-  font-weight: bold;
-  min-width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 3px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: #e74c3c;
+      color: white;
+      font-size: 8px;
+      font-weight: bold;
+      min-width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 3px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
 
     /* Carousel Section */
     .carousel {
@@ -656,27 +656,119 @@
     .size-modal-overlay.active {
       display: block;
     }
-@media (orientation: landscape) {
-  body {
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    overflow-y: auto;
-  }
-  .ipod {
-    transform: scale(0.85);
-  }
-}
 
-/* Prevent cutoff on ultra-small screens */
-@media (max-height: 500px) {
-  .ipod {
-    transform: scale(0.9);
-  }
-}
+    /* Audio control bar */
+    .audio-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 12px;
+      width: min(720px, 95%);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 18px;
+      z-index: 9999;
+      backdrop-filter: blur(6px);
+    }
+
+    /* Buttons */
+    .audio-controls .btn {
+      border: none;
+      background: transparent;
+      color: inherit;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 8px;
+      transition: background .15s ease;
+    }
+    .audio-controls .btn:hover { background: rgba(255,255,255,0.06); }
+
+    /* Play icon larger */
+    .audio-controls .play { font-size: 18px; }
+
+    /* Time display */
+    .audio-controls .time {
+      font-size: 13px;
+      min-width: 82px;
+      text-align: center;
+      opacity: .95;
+    }
+
+    /* Progress wrapper and bar */
+    .progress-wrap {
+      position: relative;
+      height: 8px;
+      flex: 1 1 auto;
+      background: rgba(255,255,255,0.1);
+      border-radius: 999px;
+      overflow: hidden;
+      cursor: pointer;
+      margin: 0 8px;
+    }
+    .progress {
+      position: absolute;
+      height: 100%;
+      width: 0%;
+      left: 0;
+      top: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,0.9), rgba(255,255,255,0.6));
+      border-radius: 999px;
+      transition: width .08s linear;
+    }
+
+    /* Volume slider */
+    .volume {
+      width: 110px;
+      max-width: 20%;
+      background: transparent;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      cursor: pointer;
+    }
+    .volume::-webkit-slider-runnable-track { height: 4px; background: rgba(255,255,255,0.12); border-radius: 999px; }
+    .volume::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: white; margin-top: -5px; box-shadow: 0 2px 6px rgba(0,0,0,0.4); }
+
+    @media (orientation: landscape) {
+      body {
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        overflow-y: auto;
+      }
+      .ipod {
+        transform: scale(0.85);
+      }
+    }
+
+    /* Prevent cutoff on ultra-small screens */
+    @media (max-height: 500px) {
+      .ipod {
+        transform: scale(0.9);
+      }
+    }
+
+    /* Small screens: stack slightly and shrink */
+    @media (max-width: 520px) {
+      .audio-controls { gap: 8px; padding: 8px; bottom: 12px; border-radius: 10px; }
+      .volume { width: 80px; }
+      .audio-controls .time { display: none; }
+    }
   </style>
 </head>
 <body>
+  <audio id="bgMusic" loop>
+    <source src="./img/bad.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
   <div class="ipod">
     <div class="screen">
       <div class="screen-header">
@@ -770,9 +862,10 @@
       <!-- Cart items will be inserted here dynamically -->
     </div>
     <div class="cart-footer">
-          <button class="checkout-btn" id="checkoutBtn">check out</button>
+      <button class="checkout-btn" id="checkoutBtn">check out</button>
     </div>
   </div>
+
   <script>
     const items = document.querySelectorAll('.item');
     let currentIndex = 0;
@@ -963,7 +1056,7 @@
       currentProductToAdd = products[currentIndex];
       modalProductImage.src = currentProductToAdd.image;
       modalProductName.textContent = currentProductToAdd.name;
-      modalProductPrice.textContent = `$${currentProductToAdd.price.toFixed(2)}`;
+      modalProductPrice.textContent = `${currentProductToAdd.price.toFixed(2)}`;
    
       sizeButtonsContainer.innerHTML = '';
       currentProductToAdd.sizes.forEach(size => {
@@ -1015,6 +1108,26 @@
         return;
       }
       window.location.href = 'checkout.html';
+    });
+
+    // Background music controls
+    const bgMusic = document.getElementById('bgMusic');
+    let isPlaying = false;
+
+    // Try to play music on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      bgMusic.volume = 0.3; // Set default volume to 30%
+      bgMusic.play().then(() => {
+        isPlaying = true;
+      }).catch(() => {
+        // Browser blocked autoplay, will play on first user interaction
+        document.body.addEventListener('click', () => {
+          if (!isPlaying) {
+            bgMusic.play();
+            isPlaying = true;
+          }
+        }, { once: true });
+      });
     });
 
     // Initialize
