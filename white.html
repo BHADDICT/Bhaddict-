@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title> Tee white stripes</title>
+  <title>iPod Product Display</title>
 
   <style>
     * {
@@ -11,37 +11,39 @@
       padding: 0;
       box-sizing: border-box;
     }
+/* === Vintage Grain Filter === */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 30% 30%, rgba(255, 244, 230, 0.08), transparent 60%),
+    rgba(255, 250, 240, 0.05);
+  pointer-events: none;
+  z-index: 10000;
+  mix-blend-mode: overlay;
+  filter: contrast(1.05) saturate(0.85) brightness(0.98);
+}
 
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: 
-        radial-gradient(circle at 30% 30%, rgba(255, 244, 230, 0.08), transparent 60%),
-        rgba(255, 250, 240, 0.05);
-      pointer-events: none;
-      z-index: 10000;
-      mix-blend-mode: overlay;
-      filter: contrast(1.05) saturate(0.85) brightness(0.98);
-    }
+/* Add animated film grain texture */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("./img/grain.jpg");
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 9999;
+  animation: grainMove 1.5s steps(4) infinite;
+}
 
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background-image: url("./img/grain.jpg");
-      opacity: 0.15;
-      pointer-events: none;
-      z-index: 9999;
-      animation: grainMove 1.5s steps(4) infinite;
-    }
-
-    @keyframes grainMove {
-      0%, 100% { transform: translate(0, 0); }
-      25% { transform: translate(-5%, -5%); }
-      50% { transform: translate(5%, 5%); }
-      75% { transform: translate(-5%, 5%); }
-    }
+@keyframes grainMove {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-5%, -5%); }
+  50% { transform: translate(5%, 5%); }
+  75% { transform: translate(-3%, 3%); }
+  100% { transform: translate(0, 0); }
+}
 
     .ipod-container {
       width: 380px;
@@ -85,28 +87,9 @@
     }
 
     .cart-btn {
-      position: relative;
       color: #5B9BD5;
       font-size: 20px;
       cursor: pointer;
-    }
-
-    .cart-count {
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      background: #e74c3c;
-      color: white;
-      font-size: 10px;
-      font-weight: bold;
-      min-width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 0 4px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     }
 
     .screen-content {
@@ -141,6 +124,7 @@
       transform: scale(1.05);
     }
 
+    /* --- Modal Popup --- */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -202,6 +186,28 @@
       background: rgba(0, 0, 0, 0.8);
     }
 
+    .slider-dots {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .dot.active {
+      background: white;
+    }
+
     .product-details {
       flex: 1;
     }
@@ -230,64 +236,6 @@
     .size-guide::before {
       content: '▶ ';
       font-size: 10px;
-    }
-
-    .size-guide:hover {
-      color: #e74c3c;
-      text-decoration: underline;
-    }
-
-    .size-modal {
-      display: none;
-      position: fixed;
-      z-index: 999;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.6);
-      justify-content: center;
-      align-items: center;
-    }
-
-    .size-modal-content {
-      position: relative;
-      background: #fff;
-      border-radius: 10px;
-      padding: 10px;
-      max-width: 90%;
-      max-height: 80%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .size-modal-content img {
-      max-width: 100%;
-      max-height: 100%;
-      border-radius: 8px;
-      display: block;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 8px;
-      right: 12px;
-      font-size: 22px;
-      font-weight: bold;
-      color: #333;
-      cursor: pointer;
-      transition: 0.3s;
-      background: none;
-      border: none;
-      z-index: 10;
-    }
-
-    .close-btn:hover {
-      color: #e74c3c;
-      transform: scale(1.1);
     }
 
     .product-features {
@@ -358,6 +306,7 @@
       background: linear-gradient(180deg, #C97B7B 0%, #B96B6B 100%);
     }
 
+    /* === Size Slider === */
     .size-slider-container {
       padding-top: 15px;
       border-top: 1px solid #ddd;
@@ -379,7 +328,7 @@
     .slider-thumb {
       position: absolute;
       top: 50%;
-      left: 50%;
+      left: 30%;
       width: 20px;
       height: 20px;
       background: linear-gradient(135deg, #5B9BD5, #4A8BC2);
@@ -408,6 +357,7 @@
       color: #333;
     }
 
+    /* === Click Wheel === */
     .controls {
       margin-top: 25px;
       display: flex;
@@ -445,17 +395,37 @@
       background: linear-gradient(145deg, #d0d0d0, #e5e5e5);
     }
 
-    .menu-text {
-      position: absolute;
-      top: -30px;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      font-size: 18px;
-      font-weight: 500;
-      color: #c4bfbf;
-      user-select: none;
-    }
+.menu-text {
+  position: absolute;
+  top: -30px;                /* moves 8px above the top edge */
+  left: 50%;
+  transform: translateX(-50%); /* corrected centering — -60% shifts too far */
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  color: #c4bfbf;
+  user-select: none;
+}
+.size-labels {
+  margin: 15px 0 5px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+}
+
+.size-labels span {
+  display: inline-block;
+  padding: 6px 14px;
+  background: #111;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+}
+
+
+
+
 
     .wheel-button {
       position: absolute;
@@ -511,6 +481,7 @@
       border-radius: 10px;
     }
 
+    /* === Cart Modal === */
     .cart-modal-overlay {
       display: none;
       position: fixed;
@@ -537,7 +508,22 @@
       flex-direction: column;
       animation: slideIn 0.3s ease;
     }
+.close-btn {
+position: absolute;
+top: 0.5rem;
+right: 0.5rem;
+background: transparent;
+border: none;
+font-size: 1.8rem;
+font-weight: bold;
+cursor: pointer;
+z-index: 10;
+}
 
+/* Optional hover effect for the X */
+.close-btn {
+color: red;
+}
     @keyframes slideIn {
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -598,6 +584,98 @@
       gap: 8px;
       margin-top: 8px;
     }
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  position: relative;
+  background: #fff;
+  padding: 0;
+  border-radius: 6px;
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.image-frame {
+  background: #fff;
+  padding: 20px;
+  border: 2px solid #e0e0e0; /* subtle light grey border */
+  border-radius: 6px;
+}
+
+.image-frame img {
+  max-width: 500px;
+  height: auto;
+  display: block;
+  border: none;
+}
+
+/* Close button */
+.close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  color: #666;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.close:hover {
+  color: #000;
+}
+
+/* Dots below image */
+.slider-dots {
+  margin: 15px 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Close Button */
+.close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.7rem;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  font-weight: bold;
+  color: red;
+  cursor: pointer;
+  z-index: 10;
+  transition: color 0.2s ease;
+}
+
+.close:hover {
+  color: darkred;
+}
+
+#modalImage {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+/* Optional animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
 
     .cart-qty button {
       width: 22px;
@@ -648,13 +726,6 @@
     .checkout-btn:active {
       background: linear-gradient(180deg, #C97B7B 0%, #B96B6B 100%);
     }
-
-    .empty-cart {
-      text-align: center;
-      padding: 40px 20px;
-      color: #999;
-      font-size: 14px;
-    }
   </style>
 </head>
 
@@ -662,34 +733,24 @@
   <div class="ipod-container">
     <div class="screen">
       <div class="screen-header">
-        <span class="back-btn" onclick="window.location.href='index.html';">◀</span>
+     <span class="back-btn" onclick="window.location.href='index.html';">◀</span>
+
         <span class="screen-title">BAD</span>
-        <span class="cart-btn" id="cartBtn">
-          🛒
-          <span class="cart-count" id="cartCount">0</span>
-        </span>
+        <span class="cart-btn">🛒</span>
       </div>
 
       <div class="screen-content">
         <div class="product-layout">
           <div class="product-image">
-            <img src="./img/white.png" alt=" Tee black stripes" id="productImg">
+            <img src="./img/white.png" alt="Bhaddict Sports Tee white stripes">
           </div>
 
           <div class="product-details">
-            <div class="product-name"> Tee white stripes</div>
+            <div class="product-name">Bhaddict Sports Tee white stripes</div>
             <div class="product-price">$9.99</div>
-            <div class="size-guide" id="openSizeGuide">Size Guide</div>
-
-            <div class="size-modal" id="sizeModal">
-              <div class="size-modal-content">
-                <span class="close-btn" id="closeSizeGuide">&times;</span>
-                <img src="./img/size.png" alt="Size Guide">
-              </div>
-            </div>
-
+            <div class="size-guide">size guide</div>
             <ul class="product-features">
-              <li>Cropped Slim fits</li>
+               <li>Cropped Slim fits</li>
               <li>3 stripes on shoulder</li>
               <li> Embroidery Front logo</li>
               <li>100% cotton</li>
@@ -712,245 +773,216 @@
               <div class="slider-thumb" id="sliderThumb"></div>
             </div>
           </div>
-          <div class="size-labels">
-            <span>Small</span>
-            <span>Medium</span>
-            <span>Large</span>
-          </div>
+                  <div class="size-labels">
+  <span>Small</span>
+</div>
         </div>
       </div>
     </div>
 
-    <div class="controls">
-      <div class="click-wheel">
-        <div class="wheel-button btn-prev" onclick="window.location.href='classic.html';">
-          <span>⏮</span>
-        </div>
-        <div class="wheel-button btn-next" onclick="window.location.href='product.html';">
-          <span>⏭</span>
-        </div>
-        <div class="wheel-button btn-play" onclick="window.location.href='index.html';">
-          <span>▶⏸</span>
-        </div>
-        <div class="wheel-center" onclick="window.location.href='home.html';">
-          <span class="menu-text">MENU</span>
-        </div>
-      </div>
+ <div class="controls">
+  <div class="click-wheel">
+    
+    <!-- Previous button -->
+    <div class="wheel-button btn-prev" onclick="window.location.href='classic.html';">
+      <span>⏮</span>
     </div>
+    
+    <!-- Next button -->
+    <div class="wheel-button btn-next" onclick="window.location.href='product.html';">
+      <span>⏭</span>
+    </div>
+    
+    <!-- Play/Pause button -->
+    <div class="wheel-button btn-play" onclick="window.location.href='index.html';">
+      <span>▶⏸</span>
+    </div>
+    
+    <!-- Center MENU button -->
+    <div class="wheel-center" onclick="window.location.href='index.html';">
+      <span class="menu-text">MENU</span>
+    </div>
+
+  </div>
+</div>
+
 
     <div class="footer-bar"></div>
   </div>
 
-  <div class="modal-overlay" id="imageModal">
-    <div class="modal-content">
-      <button class="modal-close" id="closeModal">&times;</button>
-      <img src="./img/white.png" alt=" Tee white stripes" id="modalImage">
+<div class="modal-overlay" id="imageModal">
+  <div class="modal-content">
+    <span class="close" id="closeModal">&times;</span>
+    <div class="image-frame">
+      <img src="./img/white.png" alt="Bhaddict Sports Tee white stripes" id="modalImage">
+    </div>
+    <div class="slider-dots" id="dotsContainer"></div>
+  </div>
+</div>
+
+
+  <!-- Cart Modal -->
+<div class="cart-modal-overlay" id="cartModal">
+  <div class="cart-modal">
+    <button class="close-btn" id="closeCart">&times;</button>
+    <div class="cart-header">Checking out already bro?</div>
+    <div class="cart-content" id="cartItems">
+      <!-- Cart items will be inserted here -->
+    </div>
+    <div class="cart-footer">
+      <button class="checkout-btn">check out</button>
     </div>
   </div>
+</div>
 
-  <div class="cart-modal-overlay" id="cartModal">
-    <div class="cart-modal">
-      <button class="close-btn" id="closeCart">&times;</button>
-      <div class="cart-header">Checking out already bro?</div>
-      <div class="cart-content" id="cartItems"></div>
-      <div class="cart-footer">
-        <button class="checkout-btn" id="checkoutBtn">check out</button>
-      </div>
-    </div>
-  </div>
 
-  <script>
-    // Product data
-    const product = {
-      id: 2,
-      name: ' Tee white stripes',
-      price: 9.99,
-      image: './img/white.png'
-    };
+<script>
+  // === Close Cart Button ===
+  document.getElementById('closeCart').addEventListener('click', function() {
+    document.getElementById('cartModal').classList.remove('active');
+  });
 
-    const sizes = ['S', 'M', 'L'];
-    let selectedSize = 1; // Default to Medium
-    let quantity = 1;
+  // === Quantity control ===
+  let quantity = 1;
+  const qtyDisplay = document.getElementById('quantity');
+  document.getElementById('increase').onclick = () => qtyDisplay.textContent = ++quantity;
+  document.getElementById('decrease').onclick = () => {
+    if (quantity > 1) qtyDisplay.textContent = --quantity;
+  };
 
-    // Cart management functions
-    function getCart() {
-      const cart = localStorage.getItem('cartData');
-      return cart ? JSON.parse(cart) : [];
+  // === Size (only Small) ===
+  const sizes = ['Small'];
+  let selectedSize = 0;
+
+  // Remove slider UI
+  const sliderThumb = document.getElementById('sliderThumb');
+  const sliderTrack = sliderThumb.parentElement;
+  sliderThumb.style.display = 'none';
+  sliderTrack.style.display = 'none';
+
+  // === Image modal ===
+  const productImg = document.querySelector('.product-image img');
+  const imageModal = document.getElementById('imageModal');
+  const modalImg = document.getElementById('modalImage');
+  const closeModal = document.getElementById('closeModal');
+  const dotsContainer = document.getElementById('dotsContainer');
+
+  const images = ['./img/white.png'];
+  let current = 0;
+
+  function updateModal() {
+    modalImg.src = images[current];
+    dotsContainer.innerHTML = '';
+    images.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'dot' + (i === current ? ' active' : '');
+      dot.addEventListener('click', () => {
+        current = i;
+        updateModal();
+      });
+      dotsContainer.appendChild(dot);
+    });
+  }
+
+  productImg.onclick = () => {
+    imageModal.classList.add('active');
+    updateModal();
+  };
+
+  closeModal.onclick = () => imageModal.classList.remove('active');
+  imageModal.onclick = e => {
+    if (e.target === imageModal) imageModal.classList.remove('active');
+  };
+
+  // === Cart functionality ===
+  const cartBtn = document.querySelector('.cart-btn');
+  const cartModal = document.getElementById('cartModal');
+  const cartItemsContainer = document.getElementById('cartItems');
+  const checkoutBtn = document.querySelector('.checkout-btn');
+  let cart = [];
+
+  // Show cart modal
+  cartBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    cartModal.classList.add('active');
+    renderCart();
+  });
+
+  // Close clicking outside
+  cartModal.addEventListener('click', e => {
+    if (e.target === cartModal) cartModal.classList.remove('active');
+  });
+
+  // Add to cart button
+  document.getElementById('addToCart').onclick = () => {
+    const existing = cart.find(i => i.size === sizes[selectedSize]);
+    if (existing) existing.quantity += quantity;
+    else {
+      cart.push({
+        name: 'Bhaddict Sports Tee white stripes',
+        price: 9.99,
+        size: 'Small',
+        quantity,
+        image: './img/white.png'
+      });
     }
 
-    function saveCart(cart) {
-      localStorage.setItem('cartData', JSON.stringify(cart));
-      updateCartCount();
+    alert(`Added ${quantity} × Bhaddict Sports Tee white stripes (Small) to cart!`);
+
+    quantity = 1;
+    qtyDisplay.textContent = 1;
+    renderCart();
+  };
+
+  // Render cart items
+  function renderCart() {
+    cartItemsContainer.innerHTML = '';
+    if (cart.length === 0) {
+      cartItemsContainer.innerHTML = '<p style="font-size:12px;color:#333;">No items yet!</p>';
+      return;
     }
 
-    function updateCartCount() {
-      const cart = getCart();
-      const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
-      const cartCountElement = document.getElementById('cartCount');
-      cartCountElement.textContent = totalItems;
-      cartCountElement.style.display = totalItems > 0 ? 'flex' : 'none';
-    }
-
-    function addToCart(productData, size, qty) {
-      const cart = getCart();
-      const existingItem = cart.find(item => item.id === productData.id && item.size === size);
-      
-      if (existingItem) {
-        existingItem.qty += qty;
-      } else {
-        cart.push({
-          id: productData.id,
-          name: productData.name,
-          price: productData.price,
-          image: productData.image,
-          qty: qty,
-          size: size
-        });
-      }
-      
-      saveCart(cart);
-    }
-
-    function renderCart() {
-      const cart = getCart();
-      const cartItemsContainer = document.getElementById('cartItems');
-      
-      if (cart.length === 0) {
-        cartItemsContainer.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
-        return;
-      }
-      
-      cartItemsContainer.innerHTML = cart.map((item, index) => `
-        <div class="cart-item">
-          <img src="${item.image}" alt="${item.name}">
-          <div class="cart-item-info">
-            <div><strong>${item.name}</strong></div>
-            <div class="price">$${item.price.toFixed(2)}</div>
-            <div>size: ${item.size}</div>
-            <div class="cart-qty">
-              <button onclick="changeQty(${index}, -1)">-</button>
-              <span>${item.qty}</span>
-              <button onclick="changeQty(${index}, 1)">+</button>
-            </div>
+    cart.forEach((item, index) => {
+      const div = document.createElement('div');
+      div.className = 'cart-item';
+      div.innerHTML = `
+        <img src="${item.image}" alt="${item.name}">
+        <div class="cart-item-info">
+          <div><strong>${item.name}</strong></div>
+          <div class="price">$${item.price}</div>
+          <div>size : ${item.size}</div>
+          <div class="cart-qty">
+            <button class="dec">-</button>
+            <span>${item.quantity}</span>
+            <button class="inc">+</button>
           </div>
         </div>
-      `).join('');
-    }
+      `;
 
-    function changeQty(index, delta) {
-      const cart = getCart();
-      cart[index].qty += delta;
-      
-      if (cart[index].qty <= 0) {
-        cart.splice(index, 1);
-      }
-      
-      saveCart(cart);
-      renderCart();
-    }
+      div.querySelector('.dec').onclick = () => {
+        if (item.quantity > 1) {
+          item.quantity--;
+        } else {
+          cart.splice(index, 1);
+        }
+        renderCart();
+      };
+      div.querySelector('.inc').onclick = () => {
+        item.quantity++;
+        renderCart();
+      };
 
-    // Size guide modal
-    const openGuide = document.getElementById('openSizeGuide');
-    const sizeModal = document.getElementById('sizeModal');
-    const closeSizeGuide = document.getElementById('closeSizeGuide');
-
-    openGuide.addEventListener('click', () => {
-      sizeModal.style.display = 'flex';
+      cartItemsContainer.appendChild(div);
     });
+  }
 
-    closeSizeGuide.addEventListener('click', () => {
-      sizeModal.style.display = 'none';
-    });
+  // Checkout
+  checkoutBtn.addEventListener('click', () => {
+    alert('Proceeding to checkout...');
+    cartModal.classList.remove('active');
+  });
+</script>
 
-    window.addEventListener('click', (e) => {
-      if (e.target === sizeModal) {
-        sizeModal.style.display = 'none';
-      }
-    });
 
-    // Quantity control
-    const qtyDisplay = document.getElementById('quantity');
-    document.getElementById('increase').onclick = () => {
-      quantity++;
-      qtyDisplay.textContent = quantity;
-    };
-    document.getElementById('decrease').onclick = () => {
-      if (quantity > 1) {
-        quantity--;
-        qtyDisplay.textContent = quantity;
-      }
-    };
-
-    // Size slider
-    const sliderThumb = document.getElementById('sliderThumb');
-    const sliderTrack = sliderThumb.parentElement;
-    const positions = [0, 50, 100];
-
-    function updateSliderPosition() {
-      sliderThumb.style.left = positions[selectedSize] + '%';
-    }
-    updateSliderPosition();
-
-    sliderTrack.addEventListener('click', e => {
-      const rect = sliderTrack.getBoundingClientRect();
-      const pct = ((e.clientX - rect.left) / rect.width) * 100;
-      selectedSize = pct < 33 ? 0 : pct < 66 ? 1 : 2;
-      updateSliderPosition();
-    });
-
-    // Image modal
-    const productImg = document.getElementById('productImg');
-    const imageModal = document.getElementById('imageModal');
-    const closeModal = document.getElementById('closeModal');
-
-    productImg.onclick = () => {
-      imageModal.classList.add('active');
-    };
-
-    closeModal.onclick = () => imageModal.classList.remove('active');
-    imageModal.onclick = e => {
-      if (e.target === imageModal) imageModal.classList.remove('active');
-    };
-
-    // Cart modal
-    const cartBtn = document.getElementById('cartBtn');
-    const cartModal = document.getElementById('cartModal');
-    const closeCart = document.getElementById('closeCart');
-
-    cartBtn.addEventListener('click', e => {
-      e.stopPropagation();
-      renderCart();
-      cartModal.classList.add('active');
-    });
-
-    closeCart.addEventListener('click', () => {
-      cartModal.classList.remove('active');
-    });
-
-    cartModal.addEventListener('click', e => {
-      if (e.target === cartModal) cartModal.classList.remove('active');
-    });
-
-    // Add to cart button
-    document.getElementById('addToCart').onclick = () => {
-      addToCart(product, sizes[selectedSize], quantity);
-      alert(`Added ${quantity} × ${product.name} (${sizes[selectedSize]}) to cart!`);
-      quantity = 1;
-      qtyDisplay.textContent = 1;
-    };
-
-    // Checkout button
-    document.getElementById('checkoutBtn').addEventListener('click', () => {
-      const cart = getCart();
-      if (cart.length === 0) {
-        alert('Your cart is empty!');
-        return;
-      }
-      window.location.href = 'checkout.html';
-    });
-
-    // Initialize cart count on page load
-    updateCartCount();
-  </script>
 </body>
 </html>
